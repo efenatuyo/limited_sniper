@@ -1,0 +1,20 @@
+{
+    "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|",
+    "sleep_config": {
+        "v2_searcher_sleep_in_s": 1,
+        "v3_searcher_sleep_in_s": 1,
+        "v4_searcher_sleep_in_s": 1
+    },
+    "items": {
+        "list": {
+            "15310950955": {"max_price": 6}
+        }
+    },
+    "proxy": {
+        "proxies": [
+            "username:password@ip:port",
+            "ip:port"
+        ],
+        "proxy_type": "http"
+    }
+}
