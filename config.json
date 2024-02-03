@@ -1,13 +1,33 @@
 {
     "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|",
+    "restart_after_config": {
+        "total_errors": 0,
+        "total_buys": 0,
+        "seconds": 0,
+        "total_searchers": 0
+    },
+    "cookie_unlock": false,
+    "discord_bot": {
+        "enabled": false,
+        "token": "",
+        "authorized_users": [
+            1121104771659608216
+        ]
+    },
+    "webhook": {
+        "enabled": false,
+        "url": ""
+    },
     "sleep_config": {
-        "v2_searcher_sleep_in_s": 1,
-        "v3_searcher_sleep_in_s": 1,
-        "v4_searcher_sleep_in_s": 1
+        "v1_searcher_sleep_in_s": 0.8,
+        "v3_searcher_sleep_in_s": 0.8,
+        "v4_searcher_sleep_in_s": 1,
+        "v5_searcher_sleep_in_s": 1
     },
     "items": {
         "list": {
-            "15310950955": {"max_price": 6}
+            "15310950955": {"max_price": 6},
+            "15301628186": {"max_price": 6}
         }
     },
     "proxy": {

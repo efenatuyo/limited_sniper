@@ -5,8 +5,10 @@ from . import split_list
 from ..lookup import v_one
 from ..lookup import reseller
 from ..buy import buy
+from concurrent.futures import CancelledError
 
 async def run(self):
+    open("logs.txt", "a").write(f"\nV1 [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})
     
     items = split_list.get([*self.items["list"].keys()])
@@ -15,9 +17,10 @@ async def run(self):
         for index, item_list in enumerate(items):
             if index > 0:
                 print_data(self)
-                await asyncio.sleep(self.sleep_config["v2_searcher_sleep_in_s"])
+                await asyncio.sleep(self.sleep_config["v1_searcher_sleep_in_s"])
             item_data = await v_one.get(self, item_list, session)
             self.total_searchers += len(item_list)
+            self._total_searchers += len(item_list)
             for item in item_data:
                 if 'Limited' not in item.get("itemRestrictions"):
                     info = {"price": int(item.get("lowestResalePrice", 999999999)), "productid_data": None, "collectible_item_id": item.get("collectibleItemId"), "item_id": str(item.get("id"))}
@@ -28,7 +31,7 @@ async def run(self):
                     
                     if not info["collectible_item_id"] in self.limited_collectible_ids and not info["collectible_item_id"] in self.all_limited_collectible_ids:
                         self.limited_collectible_ids.append(info["collectible_item_id"])
-                        self.all_limited_collectible_ids.append(info["collectible_item_id"])
+                        self.all_limited_collectible_ids[info["collectible_item_id"]] = info["item_id"]
                         
                     if not item.get("hasResellers") or info['price'] > self.items["list"][info['item_id']]["max_price"]:
                         continue
@@ -46,17 +49,23 @@ async def run(self):
                     if not item.get("hasResellers") or item.get("lowestResalePrice") > self.items["list"][str(item.get("id"))]["max_price"]:
                         continue
                     await buy.purchase_limited(self, {"expectedCurrency": 1,"expectedPrice": item.get("lowestResalePrice"), "expectedSellerId": 1}, item.get("id"), item.get("productId"), session)
-
      except Exception as e:
         await session.close()
         session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
         self.error_logs.append(f"V1 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+        open("logs.txt", "a").write(f"\nV1 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+        self.total_errors += 1
+        self._total_errors += 1
         
      finally:   
         items = split_list.get([*self.items["list"].keys()])
         
         print_data(self)
-        await asyncio.sleep(self.sleep_config["v2_searcher_sleep_in_s"])
+        if self.restart_after_config["total_errors"] > 0 and self.restart_after_config["total_errors"] <= self._total_errors or self.restart_after_config["total_buys"] > 0 and self.restart_after_config["total_buys"] <= self._total_buys or self.restart_after_config["seconds"] > 0 and self.restart_after_config["seconds"] <= int((time.time() - self._start_time) % 60) or self.restart_after_config["total_searchers"] > 0 and self.restart_after_config["total_searchers"] <= self._total_searchers:
+            await session.close()
+            await self.kakoas.run_delete
+            
+        await asyncio.sleep(self.sleep_config["v1_searcher_sleep_in_s"])
         
 def print_data(self):
         os.system(self.clear)
