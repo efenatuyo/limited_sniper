@@ -21,7 +21,7 @@ async def run(self):
                 self._total_searchers += len(items)
                 for item in items:
                     if self.all_limited_collectible_ids[item.get("collectibleItemId")] not in self.items["list"]:
-                        del self.limited_collectible_ids[item.get("collectibleItemId")]
+                        self.limited_collectible_ids.remove(item.get("collectibleItemId"))
                         continue
                     info = {"price": int(item.get("lowestPrice", 999999999)), "productid_data": item.get("lowestAvailableResaleProductId"), "collectible_item_id": item.get("collectibleItemId"), "item_id": str(item.get("itemTargetId")), "collectible_item_instance_id": item.get("lowestAvailableResaleItemInstanceId")}
                     if not info["item_id"] in self.items["list"]:
@@ -67,7 +67,7 @@ async def run_proxy(self, proxy):
                 self._total_searchers += len(items)
                 for item in items:
                     if self.all_limited_collectible_ids[item.get("collectibleItemId")] not in self.items["list"]:
-                        del self.limited_collectible_ids[item.get("collectibleItemId")]
+                        self.limited_collectible_ids.remove(item.get("collectibleItemId"))
                         continue
                     info = {"price": int(item.get("lowestPrice", 999999999)), "productid_data": item.get("lowestAvailableResaleProductId"), "collectible_item_id": item.get("collectibleItemId"), "item_id": str(item.get("itemTargetId")), "collectible_item_instance_id": item.get("lowestAvailableResaleItemInstanceId")}
                     if not str(item["itemTargetId"]) in self.items["list"]:
