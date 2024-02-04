@@ -14,21 +14,21 @@
             1121104771659608216
         ]
     },
+    "requests_a_minute": {
+        "v_one": 60,
+        "v_three": 60,
+        "v_four": 60,
+        "v_five": 60
+    },
     "webhook": {
         "enabled": false,
         "url": ""
     },
-    "sleep_config": {
-        "v1_searcher_sleep_in_s": 0.8,
-        "v3_searcher_sleep_in_s": 0.8,
-        "v4_searcher_sleep_in_s": 1,
-        "v5_searcher_sleep_in_s": 1
-    },
     "items": {
-        "list": {
-            "15310950955": {"max_price": 6},
-            "15301628186": {"max_price": 6}
-        }
+      "list": {
+        "15310950955": {"max_price": 6},
+        "15301628186": {"max_price": 6}
+      }
     },
     "proxy": {
         "proxies": [

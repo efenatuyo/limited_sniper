@@ -15,16 +15,22 @@ class sniper:
     error_logs: list = deque(maxlen=5)
     total_errors: int = 0
     _total_errors: int = 0
+    
     buy_logs: list = []
     total_buys: int = 0
     _total_buys: int = 0
+    
     search_logs: list = deque(maxlen=5)
     
     total_searchers: int = 0
     _total_searchers: int = 0
     
-    average_speed: list = deque(maxlen=20)
-
+    average_speed_v1: list = deque(maxlen=20)
+    average_speed_v2: list = deque(maxlen=20)
+    average_speed_v3: list = deque(maxlen=20)
+    average_speed_v4: list = deque(maxlen=20)
+    average_speed_v5: list = deque(maxlen=20)
+    
     clear: str = "cls" if os.name == 'nt' else "clear"
 
     limited_ids: list = []
@@ -55,13 +61,14 @@ class sniper:
         for proxy in proxies["proxies"]:
             self.proxies.append(f"{proxies['proxy_type']}://{proxy}")
         
-        self.sleep_config = data["sleep_config"]
         self.restart_after_config = data["restart_after_config"]
         self.webhook = data["webhook"]
         self.discord_bot = data["discord_bot"]
         if self.discord_bot["enabled"] and not self.discord_bot["authorized_users"]:
             open("logs.txt", "a").write(f"\nMAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] CLOSING FILE. If discord bot is enabled atleast one authorized user is required")
             raise Exception("If discord bot is enabled atleast one authorized user is required")
+        self.searches_a_minute = data["requests_a_minute"]
+        
 
     def get_prefix(self):
         if sys.executable.endswith("python.exe"):
@@ -118,7 +125,9 @@ class sniper:
                 print("Invalid discord token provided...")
                 os.system("pause")
                 sys.exit(0)
-            except:
+            except Exception as e:
+                self.error_logs.append(f"MAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+                open("logs.txt", "a").write(f"\nMAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
                 open("logs.txt", "a").write(f"\nMAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] restarting tasks")
                 for i, task in enumerate(filter(None, tasks), start=1):
                     open("logs.txt", "a").write(f"\nMAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] cancelling task {i}")

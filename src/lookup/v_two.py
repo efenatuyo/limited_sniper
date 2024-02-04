@@ -6,7 +6,7 @@ async def get(self, item, session):
     async with session.get(f"https://economy.roblox.com/v2/assets/{item}/details",
                            headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
     ssl=False) as response:
-        self.average_speed.append((time.time() - start_time) / 3)
+        self.average_speed_v2.append((time.time() - start_time) / 3)
         if response.status == 403:
             if (await response.json())['message'] == "Token Validation Failed":
                 self.account['xcsrf_token'] = await xcrf_token.get(self)

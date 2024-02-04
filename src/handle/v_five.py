@@ -10,7 +10,10 @@ async def run(self):
         try:
             for index, item_id in enumerate(self.limited_collectible_ids):
                 if index > 0:
-                    await asyncio.sleep(self.sleep_config["v5_searcher_sleep_in_s"])
+                    try:
+                        await asyncio.sleep(max((60 / self.searches_a_minute["v_five"]) - max(sum(list(self.average_speed_v5)) / len(self.average_speed_v5), 0), 0))
+                    except:
+                        await asyncio.sleep(1)
                 item = await v_five.get(self, item_id, session)
                 self.total_searchers += 1
                 info = {"price": int(item.get("price", 999999999)), "productid_data": item.get("collectibleProductId"), "collectible_item_id": item_id, "item_id": self.all_limited_collectible_ids[item_id], "collectible_item_instance_id": item.get("collectibleItemInstanceId")}
@@ -28,7 +31,10 @@ async def run(self):
             self.total_errors += 1
             self._total_errors += 1
         finally:
-            await asyncio.sleep(self.sleep_config["v5_searcher_sleep_in_s"])
+            try:
+                await asyncio.sleep(max((60 / self.searches_a_minute["v_five"]) - max(sum(list(self.average_speed_v5)) / len(self.average_speed_v5), 0), 0))
+            except:
+                await asyncio.sleep(1)
 
 async def run_proxy(self, proxy):
     open("logs.txt", "a").write(f"\nV5 PROXY [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
@@ -37,7 +43,10 @@ async def run_proxy(self, proxy):
         try:
             for index, item_id in enumerate(self.limited_collectible_ids):
                 if index > 0:
-                    await asyncio.sleep(self.sleep_config["v5_searcher_sleep_in_s"])
+                    try:
+                        await asyncio.sleep(max((60 / self.searches_a_minute["v_five"]) - max(sum(list(self.average_speed_v5)) / len(self.average_speed_v5), 0), 0))
+                    except:
+                        await asyncio.sleep(1)
                 item = await v_five.get(self, item_id, session, proxy)
                 info = {"price": int(item.get("price", 999999999)), "productid_data": item.get("collectibleProductId"), "collectible_item_id": item_id, "item_id": self.all_limited_collectible_ids[item_id], "collectible_item_instance_id": item.get("collectibleItemInstanceId")}
                 if info['price'] > self.items["list"][info['item_id']]["max_price"]:
@@ -54,4 +63,7 @@ async def run_proxy(self, proxy):
             self.total_errors += 1
             self._total_errors += 1
         finally:
-            await asyncio.sleep(self.sleep_config["v5_searcher_sleep_in_s"])
+            try:
+                await asyncio.sleep(max((60 / self.searches_a_minute["v_five"]) - max(sum(list(self.average_speed_v5)) / len(self.average_speed_v5), 0), 0))
+            except:
+                await asyncio.sleep(1)

@@ -31,6 +31,31 @@ async def start(self):
         stats = "Total Searches: " + repr(self.total_searchers) + "\n\nRun time: " + self.format_duration(time.time() - self.start_time) + "\n\n\nSearch Logs:\n" + '\n'.join(log for log in self.search_logs) + f"\n\nBuy Logs:" + '\n'.join(log for log in self.buy_logs) + f"\n\n\nTotal Items bought: {len(self.buy_logs)}" + "\n\n\nError Logs:\n" + '\n'.join(log for log in self.error_logs)
         return await ctx.respond(stats)
     
+    @bot.command(description="add new item id")
+    async def add_item(ctx, item_id: Option(int, description="item id"), price: Option(int, description="price to buy at")):
+        if ctx.author.id not in self.discord_bot["authorized_users"]:
+            return await ctx.respond(f"You are not authorized to do this", ephemeral=True)
+        elif str(item_id) in self.items["list"] and self.items["list"][str(item_id)]["max_price"] == price:
+            return await ctx.respond(f"Item already in list and has the same max price", ephemeral=True)
+        self.items["list"][str(item_id)] = {"max_price": price}
+        data = json.loads(open("config.json", "r").read())
+        data["items"]["list"][str(item_id)] = {"max_price": price}
+        open("config.json", "w").write(json.dumps(data, indent=4))
+        return await ctx.respond(f"Successfully added item id `{item_id}` for the price of `{price}`")
+    
+    @bot.command(description="Remove item id")
+    async def remove_item(ctx, item_id: Option(int, description="item id you want to remove")):
+        if ctx.author.id not in self.discord_bot["authorized_users"]:
+            return await ctx.respond(f"You are not authorized to do this", ephemeral=True)
+        elif str(item_id) not in self.items["list"]:
+            return await ctx.respond(f"Item id not in list", ephemeral=True)
+        
+        del self.items["list"][str(item_id)]
+        data = json.loads(open("config.json", "r").read())
+        del data["items"]["list"][str(item_id)]
+        open("config.json", "w").write(json.dumps(data, indent=4))
+        return await ctx.respond(f"Removed item id `{item_id}`")
+        
     @bot.event
     async def on_application_command_error(ctx, error):
         return await ctx.respond(f"An error occurred: {error}", ephemeral=True)

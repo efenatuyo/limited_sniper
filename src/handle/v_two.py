@@ -13,27 +13,38 @@ async def run(self):
             random.shuffle(lis)
             for i, item_id in enumerate(lis):
                 if i > 0:
-                    if self.average_speed:
-                        await asyncio.sleep(max((60 / 1000) - max(sum(list(self.average_speed)) / len(self.average_speed), 0), 0))      
+                    if self.average_speed_v2:
+                        await asyncio.sleep(max((60 / 1000) - max(sum(list(self.average_speed_v2)) / len(self.average_speed_v2), 0), 0))      
                 if not item_id in self.items["list"]:
                     continue
                 item = await v_two.get(self, item_id, session)
                 if not item: continue
                 self.total_searchers += 1
                 self._total_searchers += 1
-                if not item.get("IsLimited"):
+                if not item.get("IsLimited") and not item.get("IsLimitedUnique"):
+                    if not item.get("CollectiblesItemDetails"):
+                        if item_id in self.items["list"]:
+                            del self.items["list"][item_id]
+                        continue 
                     info = {"price": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestResalePrice", 9999999), "productid_data": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleProductId"), "collectible_item_id": item.get("CollectibleItemId"), "item_id": str(item.get("AssetId")), "collectible_item_instance_id": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleItemInstanceId")} 
                     if not info['price']:
-                        del self.items["list"][item_id]
+                        if item_id in self.items["list"]:
+                            del self.items["list"][item_id]
                         continue 
                     if not item.get("IsForSale"):
-                        del self.items["list"][info['item_id']]
+                        if item_id in self.items["list"]:
+                            del self.items["list"][item_id]
                         continue
                     if info['price'] > self.items["list"][item_id]["max_price"]:
                         continue
                     await buy.purchase(self, info, session)
-                else: 
+                elif item.get("IsLimited") or item.get("IsLimitedUnique"):
                     self.limited_ids.append(item_id)
+                else:
+                    if item_id in self.items["list"]:
+                        del self.items["list"][item_id]
+                    continue
+    
         except asyncio.exceptions.CancelledError:
             await session.close()
             return
@@ -46,8 +57,8 @@ async def run(self):
             self._total_errors += 1
             
         finally:
-            if self.average_speed:
-                await asyncio.sleep(max((60 / 1000) - max(sum(list(self.average_speed)) / len(self.average_speed), 0), 0))
+            if self.average_speed_v2:
+                await asyncio.sleep(max((60 / 1000) - max(sum(list(self.average_speed_v2)) / len(self.average_speed_v2), 0), 0))
 
 async def run_proxy(self, format_proxy):
     open("logs.txt", "a").write(f"\nV2 PROXY [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
@@ -65,7 +76,8 @@ async def run_proxy(self, format_proxy):
                 if not item.get("IsLimited"):
                     info = {"price": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestResalePrice", 9999999), "productid_data": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleProductId"), "collectible_item_id": item.get("CollectibleItemId"), "item_id": str(item.get("AssetId")), "collectible_item_instance_id": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleItemInstanceId")} 
                     if not item.get("IsForSale"):
-                        del self.items["list"][info['item_id']]
+                        if info['item_id'] in self.items["list"]:
+                            del self.items["list"][info['item_id']]
                         continue
                     if info['price'] > self.items["list"][item_id]["max_price"]:
                         continue
