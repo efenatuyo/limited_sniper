@@ -9,6 +9,9 @@ async def run(self):
     while True:
         try:
             for index, item_id in enumerate(self.limited_collectible_ids):
+                if self.all_limited_collectible_ids[item_id] not in self.items["list"]:
+                    del self._limited_collectible_ids[item_id]
+                    continue
                 if index > 0:
                     try:
                         await asyncio.sleep(max((60 / self.searches_a_minute["v_five"]) - max(sum(list(self.average_speed_v5)) / len(self.average_speed_v5), 0), 0))

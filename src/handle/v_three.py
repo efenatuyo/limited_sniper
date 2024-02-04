@@ -20,8 +20,8 @@ async def run(self):
                 self.total_searchers += len(items)
                 self._total_searchers += len(items)
                 for item in items:
-                    if self.all_limited_collectible_ids[item] not in self.items["list"]:
-                        del self._limited_collectible_ids[item]
+                    if self.all_limited_collectible_ids[str(item.get("itemTargetId"))] not in self.items["list"]:
+                        del self._limited_collectible_ids[str(item.get("itemTargetId"))]
                         continue
                     info = {"price": int(item.get("lowestPrice", 999999999)), "productid_data": item.get("lowestAvailableResaleProductId"), "collectible_item_id": item.get("collectibleItemId"), "item_id": str(item.get("itemTargetId")), "collectible_item_instance_id": item.get("lowestAvailableResaleItemInstanceId")}
                     if not info["item_id"] in self.items["list"]:
