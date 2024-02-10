@@ -26,15 +26,11 @@ async def run(self, proxy=None):
             self._total_searchers += len(item_list)
             for item in item_data:
                 if not item.get("itemRestrictions"):
-                    if str(item.get("id")) in self.items["list"]:
-                        del self.items["list"][str(item.get("id"))]
                     continue
                 if 'Collectible' in item.get("itemRestrictions"):
                     info = {"price": int(item.get("lowestResalePrice", 999999999)), "productid_data": None, "collectible_item_id": item.get("collectibleItemId"), "item_id": str(item.get("id"))}
                     
                     if item.get("priceStatus") == "Off Sale":
-                        if str(item.get("id")) in self.items["list"]:
-                            del self.items["list"][str(item.get("id"))]
                         continue
                     
                     if not info["collectible_item_id"] in self.limited_collectible_ids and not info["collectible_item_id"] in self.all_limited_collectible_ids:
@@ -56,10 +52,7 @@ async def run(self, proxy=None):
                     if not item.get("hasResellers") or item.get("lowestResalePrice") > self.items["list"][str(item.get("id"))]["max_price"]:
                         continue
                     await buy.purchase_limited(self, {"expectedCurrency": 1,"expectedPrice": item.get("lowestResalePrice"), "expectedSellerId": 1}, item.get("id"), item.get("productId"), session)
-                else:
-                    if str(item.get("id")) in self.items["list"]:
-                        del self.items["list"][str(item.get("id"))]
-                    continue
+                    
      except asyncio.exceptions.CancelledError:
         await session.close()
         return

@@ -19,6 +19,7 @@ async def purchase(self, info, session):
     async with session.post(f"https://apis.roblox.com/marketplace-sales/v1/item/{info['collectible_item_id']}/purchase-resale",
                             json=data,
                             headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
+                            cookies={".ROBLOSECURITY": self.cookie},
     ssl=False) as response:
         if response.status == 200:
             json_response = await response.json()
