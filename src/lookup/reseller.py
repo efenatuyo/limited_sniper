@@ -2,6 +2,7 @@ from ..cookie import xcrf_token
 
 
 async def get(self, collectible_item_id, session):
+ while True:
     async with session.get(f"https://apis.roblox.com/marketplace-sales/v1/item/{collectible_item_id}/resellers?limit=1",
                            headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
     ssl=False) as response:
@@ -11,7 +12,7 @@ async def get(self, collectible_item_id, session):
                 raise Exception("Generated new xcrf_token")
         
         if response.status == 429:
-            raise Exception("Rate limit exceeded")
+            continue
         
         return (await response.json())["data"][0]
 

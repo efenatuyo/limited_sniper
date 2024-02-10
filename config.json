@@ -6,7 +6,7 @@
         "seconds": 0,
         "total_searchers": 0
     },
-    "cookie_unlock": false,
+    "cookie_unlock": true,
     "discord_bot": {
         "enabled": false,
         "token": "",
@@ -26,15 +26,9 @@
     },
     "items": {
       "list": {
-        "15310950955": {"max_price": 6},
-        "15301628186": {"max_price": 6}
-      }
-    },
-    "proxy": {
-        "proxies": [
-            "username:password@ip:port",
-            "ip:port"
-        ],
-        "proxy_type": "http"
+        "15301628186": {
+            "max_price": 6
+        }
+       }
     }
 }

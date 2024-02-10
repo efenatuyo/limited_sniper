@@ -4,8 +4,8 @@ from ..buy import buy
 from ..lookup import v_four
 from ..lookup import reseller
 
-async def run(self):
-    open("logs.txt", "a").write(f"\nV4 [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
+async def run(self, proxy=None):
+    open("logs.txt", "a").write(f"\nV4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})
     while True:
         try:
@@ -15,7 +15,7 @@ async def run(self):
                         await asyncio.sleep(max((60 / self.searches_a_minute["v_four"]) - max(sum(list(self.average_speed_v4)) / len(self.average_speed_v4), 0), 0))
                     except:
                         await asyncio.sleep(1)
-                item = await v_four.get(self, item_id, session)
+                item = await v_four.get(self, item_id, session, proxy)
                 self.total_searchers += 1
                 self._total_searchers += 1
                 if not item.get("itemRestrictions"):
@@ -58,8 +58,8 @@ async def run(self):
         except Exception as e:
             await session.close()
             session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
-            self.error_logs.append(f"V4 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
-            open("logs.txt", "a").write(f"\nV4 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+            self.error_logs.append(f"V4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+            open("logs.txt", "a").write(f"\nV4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
             self.total_errors += 1
             self._total_errors += 1
         finally:

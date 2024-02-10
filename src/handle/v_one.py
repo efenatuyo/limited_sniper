@@ -7,8 +7,8 @@ from ..lookup import reseller
 from ..buy import buy
 from concurrent.futures import CancelledError
 
-async def run(self):
-    open("logs.txt", "a").write(f"\nV1 [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
+async def run(self, proxy=None):
+    open("logs.txt", "a").write(f"\nV1 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})
     
     items = split_list.get([*self.items["list"].keys()])
@@ -21,7 +21,7 @@ async def run(self):
                     await asyncio.sleep(max((60 / self.searches_a_minute["v_one"]) - max(sum(list(self.average_speed_v1)) / len(self.average_speed_v1), 0), 0))
                 except:
                     await asyncio.sleep(1)
-            item_data = await v_one.get(self, item_list, session)
+            item_data = await v_one.get(self, item_list, session, proxy)
             self.total_searchers += len(item_list)
             self._total_searchers += len(item_list)
             for item in item_data:
@@ -60,12 +60,14 @@ async def run(self):
                     if str(item.get("id")) in self.items["list"]:
                         del self.items["list"][str(item.get("id"))]
                     continue
-                
+     except asyncio.exceptions.CancelledError:
+        await session.close()
+        return
      except Exception as e:
         await session.close()
         session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
-        self.error_logs.append(f"V1 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
-        open("logs.txt", "a").write(f"\nV1 [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+        self.error_logs.append(f"V1 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+        open("logs.txt", "a").write(f"\nV1 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
         self.total_errors += 1
         self._total_errors += 1
         
