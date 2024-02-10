@@ -77,6 +77,10 @@ async def run_proxy(self, format_proxy):
                 self.total_searchers += 1
                 self._total_searchers += 1
                 if not item.get("IsLimited") and not item.get("IsLimitedUnique"):
+                    if not item.get("CollectiblesItemDetails"):
+                        if item_id in self.items["list"]:
+                            del self.items["list"][item_id]
+                        continue 
                     info = {"price": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestResalePrice", 9999999), "productid_data": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleProductId"), "collectible_item_id": item.get("CollectibleItemId"), "item_id": str(item.get("AssetId")), "collectible_item_instance_id": item.get("CollectiblesItemDetails", {}).get("CollectibleLowestAvailableResaleItemInstanceId")} 
                     if not info['price']: continue
                     if not item.get("IsForSale"):
