@@ -1,34 +1,35 @@
 {
-    "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|",
-    "restart_after_config": {
-        "total_errors": 0,
-        "total_buys": 0,
-        "seconds": 0,
-        "total_searchers": 0
-    },
-    "cookie_unlock": true,
-    "discord_bot": {
-        "enabled": false,
-        "token": "",
-        "authorized_users": [
-            1121104771659608216
-        ]
-    },
-    "requests_a_minute": {
-        "v_one": 60,
-        "v_three": 60,
-        "v_four": 60,
-        "v_five": 60
-    },
-    "webhook": {
-        "enabled": false,
-        "url": ""
-    },
-    "items": {
-      "list": {
-        "15301628186": {
-            "max_price": 6
-        }
-       }
-    }
+  "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|",
+  "total_ips": 100,
+  "restart_after_config": {
+      "total_errors": 0,
+      "total_buys": 0,
+      "seconds": 0,
+      "total_searchers": 0
+  },
+  "cookie_unlock": true,
+  "discord_bot": {
+      "enabled": false,
+      "token": "",
+      "authorized_users": [
+          1121104771659608216
+      ]
+  },
+  "requests_a_minute": {
+      "v_one": 60,
+      "v_three": 60,
+      "v_four": 60,
+      "v_five": 60
+  },
+  "webhook": {
+      "enabled": false,
+      "url": ""
+  },
+  "items": {
+    "list": {
+      "15301628186": {
+          "max_price": 6
+      }
+     }
+  }
 }

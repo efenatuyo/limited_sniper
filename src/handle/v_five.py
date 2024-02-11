@@ -1,6 +1,5 @@
 import time, aiohttp, asyncio
 
-from ..buy import buy
 from ..lookup import v_five
 
 async def run(self):
@@ -10,7 +9,6 @@ async def run(self):
         try:
             for index, item_id in enumerate(self.limited_collectible_ids):
                 if self.all_limited_collectible_ids[item_id] not in self.items["list"]:
-                    self.limited_collectible_ids.remove(item_id)
                     continue
                 if index > 0:
                     try:
@@ -22,7 +20,7 @@ async def run(self):
                 info = {"price": int(item.get("price", 999999999)), "productid_data": item.get("collectibleProductId"), "collectible_item_id": item_id, "item_id": self.all_limited_collectible_ids[item_id], "collectible_item_instance_id": item.get("collectibleItemInstanceId")}
                 if info['price'] > self.items["list"][info['item_id']]["max_price"]:
                     continue
-                await buy.purchase(self, info, session)
+                await self.purchase(info, session)
         except asyncio.exceptions.CancelledError:
             await session.close()  
             return
@@ -46,7 +44,6 @@ async def run_proxy(self, proxy):
         try:
             for index, item_id in enumerate(self.limited_collectible_ids):
                 if self.all_limited_collectible_ids[item_id] not in self.items["list"]:
-                    self.limited_collectible_ids.remove(item_id)
                     continue
                 if index > 0:
                     try:
@@ -57,7 +54,7 @@ async def run_proxy(self, proxy):
                 info = {"price": int(item.get("price", 999999999)), "productid_data": item.get("collectibleProductId"), "collectible_item_id": item_id, "item_id": self.all_limited_collectible_ids[item_id], "collectible_item_instance_id": item.get("collectibleItemInstanceId")}
                 if info['price'] > self.items["list"][info['item_id']]["max_price"]:
                     continue
-                await buy.purchase(self, info, session)
+                await self.purchase(info, session)
         except asyncio.exceptions.CancelledError:
             await session.close()  
             return

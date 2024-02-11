@@ -1,7 +1,6 @@
 import time, aiohttp, asyncio, random
 
 from ..lookup import v_two
-from ..buy import buy
 
 async def run(self):
     open("logs.txt", "a").write(f"\nV2 [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
@@ -33,7 +32,7 @@ async def run(self):
                         continue
                     if info['price'] > self.items["list"][item_id]["max_price"]:
                         continue
-                    await buy.purchase(self, info, session)
+                    await self.purchase(info, session)
                 elif item.get("IsLimited") or item.get("IsLimitedUnique"):
                     self.limited_ids.append(item_id)
     
@@ -52,6 +51,7 @@ async def run(self):
             if self.average_speed_v2:
                 await asyncio.sleep(max((60 / 1000) - max(sum(list(self.average_speed_v2)) / len(self.average_speed_v2), 0), 0))
 
+                
 async def run_proxy(self, format_proxy):
     open("logs.txt", "a").write(f"\nV2 PROXY [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), headers={'Accept-Encoding': 'gzip, deflate'})
@@ -81,7 +81,7 @@ async def run_proxy(self, format_proxy):
                         continue
                     if info['price'] > self.items["list"][item_id]["max_price"]:
                         continue
-                    await buy.purchase(self, info, session)
+                    await self.purchase(info, session)
                 elif item.get("IsLimited") or item.get("IsLimitedUnique"): 
                     self.limited_ids.append(item_id)
         except asyncio.exceptions.CancelledError:

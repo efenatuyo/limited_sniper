@@ -4,7 +4,6 @@ from . import split_list
 
 from ..lookup import v_one
 from ..lookup import reseller
-from ..buy import buy
 from concurrent.futures import CancelledError
 
 async def run(self, proxy=None):
@@ -47,11 +46,11 @@ async def run(self, proxy=None):
                     if info['item_id'] in self.items["list"]:
                         if info['price'] > self.items["list"][info['item_id']]["max_price"]:
                             continue
-                        await buy.purchase(self, info, session)
+                        await self.purchase(info, session)
                 elif 'Limited' in item.get("itemRestrictions") or 'LimitedUnique' in item.get("itemRestrictions"):
                     if not item.get("hasResellers") or item.get("lowestResalePrice") > self.items["list"][str(item.get("id"))]["max_price"]:
                         continue
-                    await buy.purchase_limited(self, {"expectedCurrency": 1,"expectedPrice": item.get("lowestResalePrice"), "expectedSellerId": 1}, item.get("id"), item.get("productId"), session)
+                    await self.purchase_limited({"expectedCurrency": 1,"expectedPrice": item.get("lowestResalePrice"), "expectedSellerId": 1}, item.get("id"), item.get("productId"), session)
                     
      except asyncio.exceptions.CancelledError:
         await session.close()

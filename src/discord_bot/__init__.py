@@ -55,6 +55,19 @@ async def start(self):
         del data["items"]["list"][str(item_id)]
         open("config.json", "w").write(json.dumps(data, indent=4))
         return await ctx.respond(f"Removed item id `{item_id}`")
+
+    @bot.command(description="change max price")
+    async def remove_item(ctx, item_id: Option(int, description="item id you want to remove")):
+        if ctx.author.id not in self.discord_bot["authorized_users"]:
+            return await ctx.respond(f"You are not authorized to do this", ephemeral=True)
+        elif str(item_id) not in self.items["list"]:
+            return await ctx.respond(f"Item id not in list", ephemeral=True)
+        
+        del self.items["list"][str(item_id)]
+        data = json.loads(open("config.json", "r").read())
+        del data["items"]["list"][str(item_id)]
+        open("config.json", "w").write(json.dumps(data, indent=4))
+        return await ctx.respond(f"Removed item id `{item_id}`")
         
     @bot.event
     async def on_application_command_error(ctx, error):
