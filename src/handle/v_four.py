@@ -5,7 +5,7 @@ from ..lookup import reseller
 
 async def run(self, proxy=None):
     open("logs.txt", "a").write(f"\nV4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
-    session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})
+    session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie if not proxy else None}, headers={'Accept-Encoding': 'gzip, deflate'})
     while True:
         try:
             for index, item_id in enumerate(self.items["list"].copy()):
@@ -15,6 +15,7 @@ async def run(self, proxy=None):
                     except:
                         await asyncio.sleep(1)
                 item = await v_four.get(self, item_id, session, proxy)
+                self.search_logs.append(f"V4 searched one item")
                 self.total_searchers += 1
                 self._total_searchers += 1
                 if not item.get("itemRestrictions"):
@@ -49,7 +50,7 @@ async def run(self, proxy=None):
             return
         except Exception as e:
             await session.close()
-            session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie}, headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
+            session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), cookies={".ROBLOSECURITY": self.cookie if not proxy else None}, headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
             self.error_logs.append(f"V4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
             open("logs.txt", "a").write(f"\nV4 {proxy if proxy else ''} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
             self.total_errors += 1

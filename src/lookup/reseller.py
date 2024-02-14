@@ -5,6 +5,7 @@ async def get(self, collectible_item_id, session):
  while True:
     async with session.get(f"https://apis.roblox.com/marketplace-sales/v1/item/{collectible_item_id}/resellers?limit=1",
                            headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
+                           cookies={".ROBLOSECURITY": self.cookie},
     ssl=False) as response:
         if response.status == 403:
             if (await response.json())['message'] == "Token Validation Failed":
@@ -19,6 +20,7 @@ async def get(self, collectible_item_id, session):
 async def get_limited(self, itemId, session):
     async with session.get(f"https://economy.roblox.com/v1/assets/{itemId}/resellers",
                            headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
+                           cookies={".ROBLOSECURITY": self.cookie},
     ssl=False) as response:
         if response.status == 403:
             if (await response.json())['message'] == "Token Validation Failed":

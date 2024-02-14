@@ -13,10 +13,6 @@ async def get(self, item, session, proxy=None):
                 raise Exception("Generated new xcrf_token")
         
         if response.status == 429:
-            if proxy:
-                os.system("sc stop tor")
-                await asyncio.sleep(1)
-                os.system("sc start tor")
             raise Exception("Rate limit exceeded")
         
         return await response.json()

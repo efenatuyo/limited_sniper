@@ -1,4 +1,4 @@
-import time, os, aiohttp, asyncio
+import time, os, aiohttp, asyncio, math
 
 from . import split_list
 
@@ -21,6 +21,7 @@ async def run(self, proxy=None):
                 except:
                     await asyncio.sleep(1)
             item_data = await v_one.get(self, item_list, session, proxy)
+            self.search_logs.append(f"V1 searched {len(item_data)} items")
             self.total_searchers += len(item_list)
             self._total_searchers += len(item_list)
             for item in item_data:

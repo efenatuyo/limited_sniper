@@ -51,19 +51,16 @@ async def run(self):
                 await asyncio.sleep(1)
 
 async def run_proxy(self, proxy):
-    open("logs.txt", "a").write(f"\nV3 {proxy} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
+    open("logs.txt", "a").write(f"\nV3 {proxy.current} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), headers={'Accept-Encoding': 'gzip, deflate'})
     random.shuffle(self.limited_collectible_ids)
     _items = split_list.get(self.limited_collectible_ids, 30)
     while True:
         try:
             for index, _item in enumerate(_items):
-                if index > 0:
-                    try:
-                        await asyncio.sleep(max((60 / self.searches_a_minute["v_three"]) - max(sum(list(self.average_speed_v3)) / len(self.average_speed_v3), 0), 0))
-                    except:
-                        await asyncio.sleep(1)
+                proxy.random()
                 items = await v_three.get(self, _item, session, proxy)
+                if not items: continue
                 self.total_searchers += len(items)
                 self._total_searchers += len(items)
                 for item in items:
@@ -85,17 +82,13 @@ async def run_proxy(self, proxy):
         except Exception as e:
             await session.close()
             session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), headers={'Accept-Encoding': 'gzip, deflate'})  # just to refresh the session
-            open("logs.txt", "a").write(f"\nV3 {proxy} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
-            self.error_logs.append(f"V3 {proxy} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+            open("logs.txt", "a").write(f"\nV3 {proxy.current} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
+            self.error_logs.append(f"V3 {proxy.current} [{time.strftime('%H:%M:%S', time.localtime())}] {e}")
             self.total_errors += 1
             self._total_errors += 1
         finally:
             random.shuffle(self.limited_collectible_ids)
             _items = split_list.get(self.limited_collectible_ids, 30)
-            try:
-                await asyncio.sleep(max((60 / self.searches_a_minute["v_three"]) - max(sum(list(self.average_speed_v3)) / len(self.average_speed_v3), 0), 0))
-            except:
-                await asyncio.sleep(1)
 
 async def run_proxy_2(self, proxy):
     open("logs.txt", "a").write(f"\nV3.2 {proxy} [{time.strftime('%H:%M:%S', time.localtime())}] has started up")

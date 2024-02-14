@@ -16,6 +16,7 @@ async def run(self):
                     except:
                         await asyncio.sleep(1)
                 item = await v_five.get(self, item_id, session)
+                self.search_logs.append(f"V5 searched one item")
                 self.total_searchers += 1
                 info = {"price": int(item.get("price", 999999999)), "productid_data": item.get("collectibleProductId"), "collectible_item_id": item_id, "item_id": self.all_limited_collectible_ids[item_id], "collectible_item_instance_id": item.get("collectibleItemInstanceId")}
                 if info['price'] > self.items["list"][info['item_id']]["max_price"]:

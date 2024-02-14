@@ -5,7 +5,7 @@ async def get(self, item, session, proxy=None):
     start_time = time.time()
     async with session.get(f"https://economy.roblox.com/v2/assets/{item}/details",
                            headers={**session._default_headers, **{"x-csrf-token": self.account['xcsrf_token']}},
-                           proxy=proxy,
+                           proxy=proxy.current if proxy else None,
     ssl=False) as response:
         if not proxy:
             self.average_speed_v2.append((time.time() - start_time) / 3)
@@ -15,6 +15,8 @@ async def get(self, item, session, proxy=None):
                 raise Exception("Generated new xcrf_token")
             
         if response.status == 429:
+            if proxy:
+                proxy.next()
             return
         
         return await response.json()
