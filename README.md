@@ -1,4 +1,4 @@
 # limited_sniper
 
-thank you github for deleting my account for having discord green profile :D
-
+Windows 8 + support only
+to setup just change cookie in config.json and run start.cmd
