@@ -82,6 +82,7 @@ async def run_pp(self, proxy):
     session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=None), headers={'Accept-Encoding': 'gzip, deflate'})
     
     items = split_list.get([*self.items["list"].keys()])
+    random.shuffle(items)
     while True:
      try:
         for index, item_list in enumerate(items):
@@ -129,6 +130,7 @@ async def run_pp(self, proxy):
         
      finally:   
         items = split_list.get([*self.items["list"].keys()])
+        random.shuffle(items)
         print_data(self)
         if self.restart_after_config["total_errors"] > 0 and self.restart_after_config["total_errors"] <= self._total_errors or self.restart_after_config["total_buys"] > 0 and self.restart_after_config["total_buys"] <= self._total_buys or self.restart_after_config["seconds"] > 0 and self.restart_after_config["seconds"] <= int((time.time() - self._start_time) % 60) or self.restart_after_config["total_searchers"] > 0 and self.restart_after_config["total_searchers"] <= self._total_searchers:
             await session.close()
