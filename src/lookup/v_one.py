@@ -20,3 +20,18 @@ async def get(self, items, session, proxy=None):
         
         return (await response.json())['data']
         
+async def get_pp(items, session, proxy):
+    async with session.post("https://catalog.roblox.com/v1/catalog/items/details",
+                            json={"items": [{"itemType": "Asset", "id": id} for id in items]},
+                            headers={"x-csrf-token": await proxy.current_xtt.x_token()},
+                            proxy=str(proxy.current),
+    ssl=False) as response:
+        if response.status == 403:
+            if (await response.json())['message'] == "Token Validation Failed":
+                await proxy.current_xtt.generate_token(session)
+                return []
+        elif response.status == 200:
+            return (await response.json())['data']
+        else:
+            return []
+        

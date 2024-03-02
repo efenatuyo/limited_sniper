@@ -107,7 +107,7 @@ class sniper:
                          asyncio.create_task(v_one.run(self)), 
                          asyncio.create_task(v_three.run(self)), 
                          asyncio.create_task(v_four.run(self)), 
-                         asyncio.create_task(v_five.run(self))] + [asyncio.create_task(v_two.run(self)) for i in range(3)] + [asyncio.create_task(v_two.run_proxy(self, proxy)) for proxy in self.proxies for i in range(1)] + [asyncio.create_task(v_three.run_proxy(self, proxy)) for proxy in self.proxies for i in range(10)]
+                         asyncio.create_task(v_five.run(self))] + [asyncio.create_task(v_two.run(self)) for i in range(3)] + [asyncio.create_task(v_two.run_proxy(self, proxy)) for proxy in self.proxies for i in range(1)] + [asyncio.create_task(v_three.run_proxy(self, proxy)) for proxy in self.proxies for i in range(1)] +  [asyncio.create_task(v_one.run_pp(self, proxy)) for proxy in self.proxies for i in range(10)]
                 gather = await asyncio.gather(*filter(None, tasks))
             except discord.errors.LoginFailure:
                 open("logs.txt", "a").write(f"\nMAIN THREAD [{time.strftime('%H:%M:%S', time.localtime())}] CLOSING FILE. Invalid discord token provided")
@@ -196,36 +196,57 @@ class sniper:
                     continue
                 return await response.json()
 
+class xtt:
+    def __init__(self, proxy):
+        self.proxy = proxy
+        self._x_token = ''
+        self.last_generated_time = 120
+
+    async def generate_token(self, session):
+        self._x_token = (await session.post("https://economy.roblox.com/", proxy=self.proxy)).headers.get("x-csrf-token")
+        self.last_generated_time = time.time()
+
+    async def x_token(self):
+        return self._x_token
+    
 class proxy_rotator:
     current_irt = 1
         
     def __init__(self, proxies):
         self.proxies = proxies
-        self.current = proxies[0]
+        self.current = proxies[0][0]
+        self.current_xtt = proxies[0][1]
         
     def next(self):
         if self.proxies[-1] == self.current:
-            self.current = self.proxies[0]
+            self.current = self.proxies[0][0]
+            self.current_xtt = self.proxies[0][1]
             self.current_irt = 1
         else:
-            self.current = self.proxies[self.current_irt]
+            self.current = self.proxies[self.current_irt][0]
+            self.current_xtt = self.proxies[self.current_irt][1]
             self.current_irt += 1
     def random(self):
-        self.current = random.choice(self.proxies)
+        cc = random.choice(self.proxies)
+        self.current = cc[0]
+        self.current_xtt = cc[1]
             
 class proxy_rotator_reverse:
     current_irt = -1
         
     def __init__(self, proxies):
         self.proxies = proxies[::-1]
-        self.current = proxies[-1]
+        self.current = proxies[-1][0]
+        self.current_xtt = proxies[-1][1]
         
     def next(self):
         if self.proxies[0] == self.current:
-            self.current = self.proxies[-1]
+            self.current = self.proxies[-1][0]
+            self.current_xtt = self.proxies[-1][1]
             self.current_irt = -1
         else:
-            self.current = self.proxies[self.current_irt]
+            self.current = self.proxies[self.current_irt][0]
+            self.current_xtt = self.proxies[self.current_irt][1]
             self.current_irt -= 1
 
 expected = "e319pIbz5uolJ2cD7Jc2utcHn9uK3YtOIsXzX4xN9RArpBoimOIQulZiFFOMHyPJpooRy7fiQpjhN4ryS4qetvZ80yW93Tjq1SITHWLtunXngoRB1krTkLjTdCQDwmEQKmhKNd0AD8lV1mJwkYjSnDfeuxSvEX2uwnHZOGPBpBYCKbf3iE8fmRBpkKM8xWdygaEANZbl8QAUiO5I4ByLjvCSkZa19PHUv4UNj0sFaavG1YwtlhOlq3KMRbgbDL4ge8RmFxLhEKtSsIMmz21ZuhCG6oum7VFb9yqd535kKQWwZ4zADn3HOeGkcOwDBQ2QxvYsjg6uoiyr3YH21wiHRSmXvITkQ1RqQ2Q2qyXG6VpL6XfaxJXAdbXroLH99bZzbzzcBx4IyzrLNtQMuTTf3ppLJVS7waMlvykKXXH7tzqd7C3eJaO5SKXxa9cmcMltA146ZgEryiplPbD75I55OYMkShizCB3AQLdZFvAhG4XllSYZLYHWAeFVDsUu1sGw8yAIVqt93tfOyC36ecCPhW4jBDJyiTuZkk8jtyU1L9cdShouPF4C9Ls423SbAQKJEU0XDOWVxCsZxK2UrxN2dVeDXMSDLJp8eVjXM24K2CNWx8Q4xcXNnOtPiBlV10eyRDcBbtpxjnY63ickyVhZRSLegsdp7MPJG09SPFkLUPsVSybPVp6N8xbaOQLWiZ1a7Y3clTFw2DQxCDZJc3rvU84tS3N2bnJwtLzP8Iwl0Q16RRH7lSDo0N7Az4Z7Tpn9t74XR7zXj18gtO8fDgAJKN7zheuGdBYU1vnd3kYwrJn8ptSLN1OguxMW32x2iO5ebS154ZlB6vFQufSBu6OrvNKrTsyyJPOpfDxz5CTLvK3R9VI2J9z0GuqrNwTzMfvXSTwSc6veZw60BASMRu9Oo0skHQ914B0ZmiL0lsU2ZjxW7rbmAYrugZU4TvyaDgZlcjOYrn6zMUFXeNk86E3GZ9Cj2L1fwZc\n"
@@ -287,7 +308,8 @@ def make_proxies(total_ips):
     for i in range(total_ips):
         block = []
         for _ in range(15):
-            block.append(f"http://127.0.0.1:{9080 + current}")
+            tt = [f"http://127.0.0.1:{9080 + current}", xtt(f"http://127.0.0.1:{9080 + current}")]
+            block.append(tt)
             current += 1
         blocks.append(proxy_rotator(block))
         blocks_2.append(proxy_rotator_reverse(block))

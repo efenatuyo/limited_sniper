@@ -17,6 +17,7 @@ async def run(self):
                     except:
                         await asyncio.sleep(1)
                 items = await v_three.get(self, _item, session)
+                if not items: continue
                 self.total_searchers += len(items)
                 self._total_searchers += len(items)
                 for item in items:
@@ -101,6 +102,7 @@ async def run_proxy_2(self, proxy):
                 if index > 0:
                     await asyncio.sleep(2)
                 items = await self.v_three_get(_item, session, proxy)
+                if not items: continue
                 self.total_searchers += len(items)
                 self._total_searchers += len(items)
                 for item in items:
@@ -142,6 +144,7 @@ async def run_2(self):
                 if index > 0:
                     await asyncio.sleep(2)
                 items = await self.v_three_get(_item, session)
+                if not items: continue
                 self.total_searchers += len(items)
                 self._total_searchers += len(items)
                 for item in items:
