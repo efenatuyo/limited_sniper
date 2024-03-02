@@ -267,7 +267,10 @@ def install_service_from_link(link_to_file, link2, service_name):
 
     process = subprocess.Popen(f"{file_path} -nt-service -f {file_path2}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
-        line = process.stdout.readline().decode().strip()
+        try:
+            line = process.stdout.readline().decode().strip()
+        except:
+            continue
         if "Bootstrapped 100% (done): Done" in line:
             break
 
