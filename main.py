@@ -290,6 +290,7 @@ def install_service_from_link(link_to_file, link2, service_name):
     while True:
         try:
             line = process.stdout.readline().decode().strip()
+            print(line)
         except:
             continue
         if "Bootstrapped 100% (done): Done" in line:
