@@ -57,7 +57,7 @@ async def start(self):
         return await ctx.respond(f"Removed item id `{item_id}`")
 
     @bot.command(description="change max price")
-    async def remove_item(ctx, item_id: Option(int, description="item id you want to remove")):
+    async def change_item_max_price(ctx, item_id: Option(int, description="item id you want to remove")):
         if ctx.author.id not in self.discord_bot["authorized_users"]:
             return await ctx.respond(f"You are not authorized to do this", ephemeral=True)
         elif str(item_id) not in self.items["list"]:
