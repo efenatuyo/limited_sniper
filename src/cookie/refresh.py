@@ -23,7 +23,7 @@ class Bypass:
         
         
     def get_csrf_token(self) -> str:
-        response = requests.post("https://economy.roblox.com/", cookies = {".ROBLOSECURITY": self.cookie})
+        response = requests.post("https://auth.roblox.com/v2/logout", cookies = {".ROBLOSECURITY": self.cookie})
         xcsrf_token = response.headers.get("x-csrf-token")
         assert xcsrf_token, "An error occurred while getting the X-CSRF-TOKEN. Could be due to an invalid Roblox Cookie"
                  
